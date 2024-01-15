@@ -1,25 +1,26 @@
 #include <iostream>
 #include <queue>
+#include <vector>
 #include <cstring>
 using namespace std;
 
 #define MAX 25
 
-int n, m, answer;
+int n, m, k, answer;
 int map[MAX][MAX];
-bool visited[MAX][MAX];
+bool visit[MAX][MAX];
 
-int dice[7] = {0, 1, 2, 3, 4, 5, 6};
-int dx[4] = {0, 1, 0, -1};
-int dy[4] = {1, 0, -1 ,0};
+int dice[7] = {0, 1, 5, 3, 4, 2, 6};
+int dx[4] = {0, 0, 1, -1};
+int dy[4] = {1, -1 ,0, 0};
 
 void input(){
-    cin>> n >> m;
+    cin >> n >> m;
     for(int i = 0; i < n; i++){
         for(int j = 0; j < n; j++){
-            cin>>map[i][j];
+            cin >> map[i][j];
         }
-    } 
+    }
 }
 
 int reverseDir(int d){
@@ -36,7 +37,7 @@ int reverseDir(int d){
 }
 
 int changeDir(int d, int ret){
-    if (ret > 0){
+    if(ret > 0){
         switch(d){
             case 0:
                 return 2;
@@ -59,32 +60,35 @@ int changeDir(int d, int ret){
                 return 1;
         }
     }
+    return d;
 }
 
-void getScore(int x, int y){
+void getScore(int a, int b){
     memset(visit, false, sizeof(visit));
 
-    int num = map[x][y];
+    int num = map[a][b];
     int cnt = 1;
 
     queue<pair<int,int>> q;
-    q.push({x,y});
-    visited[x][y] = true;
+    q.push({a,b});
+    visit[a][b] = true;
 
-    while(!q.empty){
+    while(!q.empty()){
         auto cur = q.front();
         q.pop();
 
-        for(int dir = 0; dir < 4; dir++){
-            int nx = x + dx[cur.first];
-            int ny = y + dy[cur.second];
-            if(nx < 0 || ny < 0 || nx >= n || ny >=n) continue;
-            if(map[nx][ny] != num || visited[nx][ny]) continue;
-            visited[nx][ny] = true;
+        for(int i = 0; i < 4; i++){
+            int nx = cur.first + dx[i];
+            int ny = cur.second + dy[i];
+            if(nx < 0 || ny < 0 || nx >= n || ny >= n) continue;
+            if(map[nx][ny] != num || visit[nx][ny] == true) continue;
+            visit[nx][ny] = true;
             cnt++;
-            q.push({nx,ny});
+            q.push({nx, ny});
         }
     }
+    // cout<<"cnt : "<<cnt<<"\n";
+    // cout<<"num : "<<num<<"\n";
     answer += (num * cnt);
 }
 
@@ -109,7 +113,7 @@ void updateDiceState(int d){
             dice[6] = d4;
             dice[4] = d1;
             break;
-        case 2: 
+        case 2:
             dice[1] = d2;
             dice[2] = d6;
             dice[6] = d5;
@@ -125,26 +129,27 @@ void updateDiceState(int d){
 }
 
 void solution(){
-    int x = 0; 
+    int x = 0;
     int y = 0;
     int d = 0;
     for(int i = 0; i < m; i++){
         int nx = x + dx[d];
         int ny = y + dy[d];
-        if(nx < 0 || ny < 0 || nx >= n || ny >= m){
+        if(nx < 0 || ny < 0 || nx >= n || ny >= n){
             d = reverseDir(d);
             nx = x + dx[d];
             ny = y + dy[d];
         }
         getScore(nx, ny);
         updateDiceState(d);
+        // cout<<"dice[6] : " << dice[6]<<"\n";
+        // cout<<"map[nx][ny] : "<<map[nx][ny]<<"\n";
         d = changeDir(d, dice[6] - map[nx][ny]);
         x = nx;
         y = ny;
     }
-    cout << answer <<"\n";
+    cout << answer << "\n";
 }
-
 
 void solve(){
     input();
@@ -155,8 +160,7 @@ int main() {
     ios::sync_with_stdio(false);
     cin.tie(0);
     cout.tie(0);
-    
-    solve();
 
+    solve();
     return 0;
 }
