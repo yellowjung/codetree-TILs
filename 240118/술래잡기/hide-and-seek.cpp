@@ -13,8 +13,8 @@ Info sullae;
 bool namu[MAX][MAX] = {0, };
 vector<int> runnerMap[MAX][MAX];
 
-int dx[4] = {0, -1, 0, 1};
-int dy[4] = {1, 0, -1, 0};
+int dx[4] = {-1, 0, 1, 0};
+int dy[4] = {0, 1, 0, -1};
 
 int N, M, H, K;
 bool opposite = false;
