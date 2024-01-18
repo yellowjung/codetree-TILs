@@ -14,8 +14,8 @@ int dx[8] = {0, -1, -1, -1, 0, 1, 1, 1};
 int dy[8] = {-1, -1, 0, 1, 1, 1, 0, -1};
 
 int N, M, K, C;
-int MAP[MAX][MAX];
-int herbicide[MAX][MAX];
+int MAP[MAX][MAX] = {0, };
+int herbicide[MAX][MAX] = {0, };
 int res = 0;
 
 void input(){
@@ -122,7 +122,7 @@ void dieTree(){
                 for(int l = 1; l <= K; l++){
                     int nx = i + dx[d] * l;
                     int ny = j + dy[d] * l;
-                    if( nx < 0 || ny < 0 || nx >= N || ny >= N || MAP[nx][ny] <= 0) continue;
+                    if( nx < 0 || ny < 0 || nx >= N || ny >= N || MAP[nx][ny] <= 0) break;
                     cnt += MAP[nx][ny];
                 }
             }
