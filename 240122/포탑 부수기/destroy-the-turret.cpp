@@ -170,15 +170,17 @@ bool Razer(int x, int y){
 void Bomb_Attack(int x, int y){
     Map[x][y].Attack -= Map[minX][minY].Attack;
     Active[x][y] = 1;
-    for(int i = 0; i < 8; i++){
+    for (int i = 0; i < 8; i++)
+    {
         int nx = x + cx[i];
         int ny = y + cy[i];
         pair<int, int> next = Make_Range(nx, ny);
         nx = next.first;
         ny = next.second;
+        // 좌표 변환
 
-        if(nx == minX && ny == minY) continue;
-        if(Map[nx][ny].Attack <= 0) continue;
+        if (nx == minX && ny == minY) continue;  //공격자 제외
+        if (Map[nx][ny].Attack <= 0) continue;   //부숴진 영역 제외
 
         Map[nx][ny].Attack -= (Map[minX][minY].Attack / 2);
         Active[nx][ny] = 1;
