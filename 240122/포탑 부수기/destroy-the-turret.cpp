@@ -2,41 +2,40 @@
 #include <vector>
 #include <queue>
 #include <cstring>
+
 using namespace std;
 
 int N, M, K;
 int minX, minY;
 int strX, strY;
 
-int dx[4] = { 0, 1, 0, -1 };
-int dy[4] = { 1, 0, -1, 0 };
-//우/하/좌/상
+int dx[4] = {0, 1, 0, -1};
+int dy[4] = {1, 0, -1, 0};
 
-int cx[8] = { -1, -1, 0, 1, 1, 1, 0, -1 };
-int cy[8] = { 0, 1, 1, 1, 0, -1, -1, -1 };
-//8방향
+int cx[8] = {-1, -1, 0, 1, 1, 1, 0, -1};
+int cy[8] = {0, 1, 1, 1, 0, -1, -1 ,-1};
 
-struct Tower {
+struct Tower{
     int x;
     int y;
     int Attack;
     int Last;
 };
+
 Tower Map[11][11];
 int Active[11][11];
 
-void Input() {
+void input(){
     cin >> N >> M >> K;
-    for (int i = 1; i <= N; i++)
-        for (int j = 1; j <= M; j++)
-        {
+    for(int i = 1; i <= N; i++){
+        for(int j = 1; j <= M; j++){
             int Attack;
             cin >> Attack;
-            Map[i][j] = { i, j, Attack, 0 };
+            Map[i][j] = { i, j, Attack, 0};
         }
+    }
 }
 
-//공격자 선정
 void Select_Weak() {
 
     Tower Weak = { 9999, 9999, 9999, 9999 };
@@ -63,8 +62,6 @@ void Select_Weak() {
     minY = Weak.y;
 }
 
-
-//공격 대상 선정
 void Select_Strong() {
 
     Tower Strong = { 0, 0, 0, 0 };
@@ -90,77 +87,58 @@ void Select_Strong() {
     strY = Strong.y;
 }
 
-bool End_Check() {
-    int Cnt = 0;
-    for (int i = 1; i <= N; i++)
-        for (int j = 1; j <= M; j++)
-            if (Map[i][j].Attack > 0) Cnt++;
-    if (Cnt == 1) return true;
-    else return false;
-}
-
-//범위 초과 고려
-pair<int, int> Make_Range(int x, int y) {
+pair<int, int> Make_Range(int x, int y){
     int px = x;
     int py = y;
 
-    if (px < 1) px = N;
-    else if (px > N) px = 1;
+    if(px < 1) px = N;
+    else if(px > N) px = 1;
 
-    if (py < 1) py = M;
-    else if (py > M) py = 1;
+    if(py < 1) py = M;
+    else if(py > M) py = 1;
 
-    return { px, py };
+    return {px, py};
 }
 
-//레이저 공격 가능 여부
-bool Razer(int x, int y) {
-
-    int Visit[11][11] = { 0 };
-    int Past_X[11][11] = { 0 };
-    int Past_Y[11][11] = { 0 };
+bool Razer(int x, int y){
+    int Visit[11][11] = {0, };
+    int Past_X[11][11] = {0, };
+    int Past_Y[11][11] = {0, };
     bool Flag = false;
 
     queue<pair<pair<int, int>, int>> Q;
-    Q.push({ {x, y}, 0 });
+    Q.push({{x, y}, 0});
     Visit[x][y] = 1;
 
-    //연결 가능여부
-    while (!Q.empty())
-    {
+    while(!Q.empty()){
         int px = Q.front().first.first;
         int py = Q.front().first.second;
         int time = Q.front().second;
         Q.pop();
 
-        if(px == strX && py == strY)
-        {
+        if(px == strX && py == strY){
             Flag = true;
             break;
         }
 
-        for (int i = 0; i < 4; i++)
-        {
+        for(int i = 0; i < 4; i ++){
             int nx = px + dx[i];
             int ny = py + dy[i];
             pair<int, int> next = Make_Range(nx, ny);
             nx = next.first;
             ny = next.second;
-            //nx, ny 좌표 변환
 
-            if (Visit[nx][ny] == 1) continue;        //방문 타워
-            if (Map[nx][ny].Attack <= 0) continue;   //부숴진 타워
+            if(Visit[nx][ny] == 1) continue;
+            if(Map[nx][ny].Attack <= 0) continue;
 
             Visit[nx][ny] = 1;
             Past_X[nx][ny] = px;
             Past_Y[nx][ny] = py;
-            Q.push({ {nx, ny}, time + 1 });
+            Q.push({{nx, ny}, time + 1});
         }
     }
 
-    //공격 감행
-    if(Flag == true)
-    {
+    if(Flag == true){
         Map[strX][strY].Attack -= Map[minX][minY].Attack;
         Active[strX][strY] = 1;
 
@@ -168,8 +146,7 @@ bool Razer(int x, int y) {
         int cy = Past_Y[strX][strY];
         Active[cx][cy] = 1;
 
-        while(!(cx == minX && cy == minY))
-        {
+        while(!(cx == minX && cy == minY)){
             Map[cx][cy].Attack -= (Map[minX][minY].Attack / 2);
             int next_x = Past_X[cx][cy];
             int next_y = Past_Y[cx][cy];
@@ -182,71 +159,71 @@ bool Razer(int x, int y) {
     return Flag;
 }
 
-void Bomb_Attack(int x, int y) {
+void Bomb_Attack(int x, int y){
     Map[x][y].Attack -= Map[minX][minY].Attack;
     Active[x][y] = 1;
-    for (int i = 0; i < 8; i++)
-    {
+    for(int i = 0; i < 8; i++){
         int nx = x + cx[i];
         int ny = y + cy[i];
         pair<int, int> next = Make_Range(nx, ny);
         nx = next.first;
         ny = next.second;
-        // 좌표 변환
 
-        if (nx == minX && ny == minY) continue;  //공격자 제외
-        if (Map[nx][ny].Attack <= 0) continue;   //부숴진 영역 제외
+        if(nx == minX && ny == minY) continue;
+        if(Map[nx][ny].Attack <= 0) continue;
 
         Map[nx][ny].Attack -= (Map[minX][minY].Attack / 2);
         Active[nx][ny] = 1;
     }
 }
 
-void Heal() {
-    for (int i = 1; i <= N; i++)
-        for (int j = 1; j <= M; j++)
-        {
-            if (i == minX && j == minY) continue; //공격자
-            if (i == strX && j == strY) continue; //공격대상
-            if (Map[i][j].Attack <= 0) continue;  //이미 부숴짐
-            if (Active[i][j] == 1) continue;
-            //공격 경료
-            Map[i][j].Attack += 1;
-            //1씩 증가
+bool End_Check(){
+    int Cnt = 0;
+    for(int i = 1; i <= N; i++){
+        for(int j = 1; j <= M; j++){
+            if(Map[i][j].Attack > 0) Cnt++;
         }
+    }
+    if(Cnt == 1) return true;
+    else return false;
 }
 
-void Clear() {
+void Heal(){
+    for(int i = 1; i <= N; i++){
+        for(int j = 1; j <= N; j++){
+            if(i == minX && j == minY)continue;
+            if(i == strX && j == strY)continue;
+            if(Map[i][j].Attack <= 0)continue;
+            if(Active[i][j] == 1) continue;
+            Map[i][j].Attack += 1;
+        }
+    }
+}
+
+void Clear(){
     minX = 0; minY = 0;
     strX = 0; strY = 0;
     memset(Active, 0, sizeof(Active));
 }
 
-int main() {
-    Input();
+void solution(){
     int Time = 1;
-    while (Time <= K)
-    {
-        //1.공격자 선정
+    while(Time <= K){
+        
         Select_Weak();
 
-        //2.공격대상 선정
         Select_Strong();
 
         Map[minX][minY].Attack += (N + M);
         Map[minX][minY].Last = Time;
 
-        //3.레이저 공격/폭탄 공격 시도
         bool Razer_Attack = Razer(minX, minY);
-        if(Razer_Attack == false)
-        {
+        if(Razer_Attack == false){
             Bomb_Attack(strX, strY);
         }
 
-        //종료 상황 체크
-        if (End_Check() == true) break;
+        if(End_Check() == true) break;
 
-        //4.포탑 정비
         Heal();
         Clear();
         Time++;
@@ -254,5 +231,19 @@ int main() {
 
     Select_Strong();
     cout << Map[strX][strY].Attack;
+}
 
+void solve(){
+    input();
+    solution();
+}
+
+int main(){
+    
+    ios::sync_with_stdio(0);
+    cin.tie(0);
+    cout.tie(0);
+    solve();
+
+    return 0;
 }
