@@ -91,13 +91,13 @@ pair<int, int> Make_Range(int x, int y){
     int px = x;
     int py = y;
 
-    if(px < 1) px = N;
-    else if(px > N) px = 1;
+    if (px < 1) px = N;
+    else if (px > N) px = 1;
 
-    if(py < 1) py = M;
-    else if(py > M) py = 1;
+    if (py < 1) py = M;
+    else if (py > M) py = 1;
 
-    return {px, py};
+    return { px, py };
 }
 
 bool Razer(int x, int y){
