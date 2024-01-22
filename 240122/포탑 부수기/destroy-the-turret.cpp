@@ -179,12 +179,10 @@ void Bomb_Attack(int x, int y){
 
 bool End_Check(){
     int Cnt = 0;
-    for(int i = 1; i <= N; i++){
-        for(int j = 1; j <= M; j++){
-            if(Map[i][j].Attack > 0) Cnt++;
-        }
-    }
-    if(Cnt == 1) return true;
+    for (int i = 1; i <= N; i++)
+        for (int j = 1; j <= M; j++)
+            if (Map[i][j].Attack > 0) Cnt++;
+    if (Cnt == 1) return true;
     else return false;
 }
 
