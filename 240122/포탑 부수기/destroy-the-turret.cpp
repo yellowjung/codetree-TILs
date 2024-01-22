@@ -197,15 +197,17 @@ bool End_Check(){
 }
 
 void Heal(){
-    for(int i = 1; i <= N; i++){
-        for(int j = 1; j <= N; j++){
-            if(i == minX && j == minY)continue;
-            if(i == strX && j == strY)continue;
-            if(Map[i][j].Attack <= 0)continue;
-            if(Active[i][j] == 1) continue;
+    for (int i = 1; i <= N; i++)
+        for (int j = 1; j <= M; j++)
+        {
+            if (i == minX && j == minY) continue; //공격자
+            if (i == strX && j == strY) continue; //공격대상
+            if (Map[i][j].Attack <= 0) continue;  //이미 부숴짐
+            if (Active[i][j] == 1) continue;
+            //공격 경료
             Map[i][j].Attack += 1;
+            //1씩 증가
         }
-    }
 }
 
 void Clear(){
