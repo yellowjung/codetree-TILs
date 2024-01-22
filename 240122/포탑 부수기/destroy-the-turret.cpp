@@ -101,44 +101,51 @@ pair<int, int> Make_Range(int x, int y){
 }
 
 bool Razer(int x, int y){
-    int Visit[11][11] = {0, };
-    int Past_X[11][11] = {0, };
-    int Past_Y[11][11] = {0, };
+    int Visit[11][11] = { 0 };
+    int Past_X[11][11] = { 0 };
+    int Past_Y[11][11] = { 0 };
     bool Flag = false;
 
     queue<pair<pair<int, int>, int>> Q;
-    Q.push({{x, y}, 0});
+    Q.push({ {x, y}, 0 });
     Visit[x][y] = 1;
 
-    while(!Q.empty()){
+    //연결 가능여부
+    while (!Q.empty())
+    {
         int px = Q.front().first.first;
         int py = Q.front().first.second;
         int time = Q.front().second;
         Q.pop();
 
-        if(px == strX && py == strY){
+        if(px == strX && py == strY)
+        {
             Flag = true;
             break;
         }
 
-        for(int i = 0; i < 4; i ++){
+        for (int i = 0; i < 4; i++)
+        {
             int nx = px + dx[i];
             int ny = py + dy[i];
             pair<int, int> next = Make_Range(nx, ny);
             nx = next.first;
             ny = next.second;
+            //nx, ny 좌표 변환
 
-            if(Visit[nx][ny] == 1) continue;
-            if(Map[nx][ny].Attack <= 0) continue;
+            if (Visit[nx][ny] == 1) continue;        //방문 타워
+            if (Map[nx][ny].Attack <= 0) continue;   //부숴진 타워
 
             Visit[nx][ny] = 1;
             Past_X[nx][ny] = px;
             Past_Y[nx][ny] = py;
-            Q.push({{nx, ny}, time + 1});
+            Q.push({ {nx, ny}, time + 1 });
         }
     }
 
-    if(Flag == true){
+    //공격 감행
+    if(Flag == true)
+    {
         Map[strX][strY].Attack -= Map[minX][minY].Attack;
         Active[strX][strY] = 1;
 
@@ -146,7 +153,8 @@ bool Razer(int x, int y){
         int cy = Past_Y[strX][strY];
         Active[cx][cy] = 1;
 
-        while(!(cx == minX && cy == minY)){
+        while(!(cx == minX && cy == minY))
+        {
             Map[cx][cy].Attack -= (Map[minX][minY].Attack / 2);
             int next_x = Past_X[cx][cy];
             int next_y = Past_Y[cx][cy];
