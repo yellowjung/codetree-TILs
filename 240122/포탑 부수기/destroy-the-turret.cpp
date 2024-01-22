@@ -36,52 +36,59 @@ void input(){
     }
 }
 
-void Select_Weak() {
+void Select_Weak(){
+    Tower Weak = {9999, 9999, 9999, 9999};
 
-    Tower Weak = { 9999, 9999, 9999, 9999 };
-    for (int i = 1; i <= N; i++)
-        for (int j = 1; j <= M; j++)
-        {
-            if (Map[i][j].Attack <= 0) continue;
+    for(int i = 1; i <= N; i++){
+        for(int j = 1; j <= M; j++){
+            if(Map[i][j].Attack <= 0) continue;
 
-            if (Weak.Attack > Map[i][j].Attack)
+            if(Weak.Attack > Map[i][j].Attack){
                 Weak = Map[i][j];
-            else if (Weak.Attack == Map[i][j].Attack)
-                if (Weak.Last < Map[i][j].Last)
+            }else if(Weak.Attack == Map[i][j].Attack){
+                if(Weak.Last < Map[i][j].Last){
                     Weak = Map[i][j];
-                else if (Weak.Last == Map[i][j].Last)
-                    if (Weak.x + Weak.y < i + j)
+                }else if(Weak.Last == Map[i][j].Last){
+                    if(Weak.x  + Weak.y < i + j){
                         Weak = Map[i][j];
-                    else if (Weak.x + Weak.y == i + j)
-                        if (Weak.y < j)
+                    }else if(Weak.x + Weak.y == i + j){
+                        if(Weak.y < j){
                             Weak = Map[i][j];
-                       
+                        }
+                    }
+                }
+            }
         }
+    }
 
     minX = Weak.x;
     minY = Weak.y;
 }
 
-void Select_Strong() {
+void Select_Strong(){
+    Tower Strong = {0, 0, 0, 0};
 
-    Tower Strong = { 0, 0, 0, 0 };
-    for (int i = 1; i <= N; i++)
-        for (int j = 1; j <= M; j++)
-        {
-            if (Map[i][j].Attack <= 0) continue;
-            
-            if (Strong.Attack < Map[i][j].Attack)
+    for(int i = 1; i <= N; i++){
+        for(int j = 1; j <= M; j++){
+            if(Map[i][j].Attack <= 0) continue;
+
+            if(Strong.Attack < Map[i][j].Attack){
                 Strong = Map[i][j];
-            else if (Strong.Attack == Map[i][j].Attack)
-                if (Strong.Last > Map[i][j].Last)
+            }else if(Strong.Attack == Map[i][j].Attack){
+                if(Strong.Last > Map[i][j].Last){
                     Strong = Map[i][j];
-                else if (Strong.Last == Map[i][j].Last)
-                    if (Strong.x + Strong.y > i + j)
+                }else if(Strong.Last == Map[i][j].Last){
+                    if(Strong.x + Strong.y > i + j){
                         Strong = Map[i][j];
-                    else if (Strong.x + Strong.y == i + j)
-                        if (Strong.y > j)
+                    }else if(Strong.x + Strong.y == i + j){
+                        if(Strong.y > j){
                             Strong = Map[i][j];
+                        }
+                    }
+                }
+            }
         }
+    }
 
     strX = Strong.x;
     strY = Strong.y;
@@ -91,61 +98,54 @@ pair<int, int> Make_Range(int x, int y){
     int px = x;
     int py = y;
 
-    if (px < 1) px = N;
-    else if (px > N) px = 1;
+    if(px < 1) px = N;
+    else if(px > N) px = 1;
 
-    if (py < 1) py = M;
-    else if (py > M) py = 1;
+    if(py < 1) py = M;
+    else if(py > M) py = 1;
 
-    return { px, py };
+    return {px, py};
 }
 
 bool Razer(int x, int y){
-    int Visit[11][11] = { 0 };
-    int Past_X[11][11] = { 0 };
-    int Past_Y[11][11] = { 0 };
+    int Visit[11][11] = {0, };
+    int Past_X[11][11] = {0, };
+    int Past_Y[11][11] = {0, };
     bool Flag = false;
 
     queue<pair<pair<int, int>, int>> Q;
-    Q.push({ {x, y}, 0 });
+    Q.push({{x, y}, 0});
     Visit[x][y] = 1;
 
-    //연결 가능여부
-    while (!Q.empty())
-    {
+    while(!Q.empty()){
         int px = Q.front().first.first;
         int py = Q.front().first.second;
         int time = Q.front().second;
         Q.pop();
 
-        if(px == strX && py == strY)
-        {
+        if(px == strX && py == strY){
             Flag = true;
             break;
         }
 
-        for (int i = 0; i < 4; i++)
-        {
+        for(int i = 0; i < 4; i ++){
             int nx = px + dx[i];
             int ny = py + dy[i];
             pair<int, int> next = Make_Range(nx, ny);
             nx = next.first;
             ny = next.second;
-            //nx, ny 좌표 변환
 
-            if (Visit[nx][ny] == 1) continue;        //방문 타워
-            if (Map[nx][ny].Attack <= 0) continue;   //부숴진 타워
+            if(Visit[nx][ny] == 1) continue;
+            if(Map[nx][ny].Attack <= 0) continue;
 
             Visit[nx][ny] = 1;
             Past_X[nx][ny] = px;
             Past_Y[nx][ny] = py;
-            Q.push({ {nx, ny}, time + 1 });
+            Q.push({{nx, ny}, time + 1});
         }
     }
 
-    //공격 감행
-    if(Flag == true)
-    {
+    if(Flag == true){
         Map[strX][strY].Attack -= Map[minX][minY].Attack;
         Active[strX][strY] = 1;
 
@@ -153,8 +153,7 @@ bool Razer(int x, int y){
         int cy = Past_Y[strX][strY];
         Active[cx][cy] = 1;
 
-        while(!(cx == minX && cy == minY))
-        {
+        while(!(cx == minX && cy == minY)){
             Map[cx][cy].Attack -= (Map[minX][minY].Attack / 2);
             int next_x = Past_X[cx][cy];
             int next_y = Past_Y[cx][cy];
@@ -170,17 +169,15 @@ bool Razer(int x, int y){
 void Bomb_Attack(int x, int y){
     Map[x][y].Attack -= Map[minX][minY].Attack;
     Active[x][y] = 1;
-    for (int i = 0; i < 8; i++)
-    {
+    for(int i = 0; i < 8; i++){
         int nx = x + cx[i];
         int ny = y + cy[i];
         pair<int, int> next = Make_Range(nx, ny);
         nx = next.first;
         ny = next.second;
-        // 좌표 변환
 
-        if (nx == minX && ny == minY) continue;  //공격자 제외
-        if (Map[nx][ny].Attack <= 0) continue;   //부숴진 영역 제외
+        if(nx == minX && ny == minY) continue;
+        if(Map[nx][ny].Attack <= 0) continue;
 
         Map[nx][ny].Attack -= (Map[minX][minY].Attack / 2);
         Active[nx][ny] = 1;
@@ -189,11 +186,14 @@ void Bomb_Attack(int x, int y){
 
 bool End_Check(){
     int Cnt = 0;
-    for (int i = 1; i <= N; i++)
-        for (int j = 1; j <= M; j++)
-            if (Map[i][j].Attack > 0) Cnt++;
-    if (Cnt == 1) return true;
-    else return false;
+    for(int i = 1; i <= N; i++){
+        for(int j = 1; j <= M; j++){
+            if(Map[i][j].Attack > 0) Cnt++;
+        }
+    }
+    if(Cnt == 1) return true;
+
+    return false;
 }
 
 void Heal(){
@@ -238,7 +238,7 @@ void solution(){
         Clear();
         Time++;
     }
-
+    
     Select_Strong();
     cout << Map[strX][strY].Attack;
 }
