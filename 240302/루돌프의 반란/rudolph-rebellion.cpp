@@ -162,7 +162,7 @@ int main(){
                             int beforeX = lastX - moveX;
                             int beforeY = lastY - moveY;
 
-                            if(!is_inrange(beforeX, beforeY)) break;
+                            //if(!is_inrange(beforeX, beforeY)) break;
 
                             int idx = board[beforeX][beforeY];
 
