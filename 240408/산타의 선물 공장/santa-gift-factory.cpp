@@ -7,7 +7,7 @@ struct BOX{
     int idx;
     int weight;
     int belt;
-
+    
     BOX* prev;
     BOX* next;
 
@@ -24,8 +24,7 @@ struct BELT{
     BOX* head;
     BOX* tail;
     bool is_broken;
-
-    BELT(){
+    BELT() {
         is_broken = false;
         head = new BOX();
         tail = new BOX();
@@ -77,6 +76,7 @@ void pop_front(int belt_num){
     item->next = NULL;
 }
 
+
 void q_100(){
     cin >> n;
     cin >> m;
@@ -85,7 +85,7 @@ void q_100(){
     for(int i = 0; i < n; i++){
         cin >> id[i];
     }
-    for(int i = 0; i < n; i++){
+    for(int i = 0 ; i < n; i++){
         cin >> w[i];
     }
 
@@ -112,15 +112,14 @@ int q_200(){
         }
 
         BOX* front = belt[i].head -> next;
-        if(front -> weight <= w){
-            ret += front -> weight;
+        if(front->weight <= w){
+            ret += front->weight;
             pop_front(i);
         }else{
             pop_front(i);
             push_back(i, front);
         }
     }
-
     return ret;
 }
 
@@ -167,7 +166,6 @@ int q_400(){
         prev->next = belt[item->belt].tail;
         belt[item->belt].tail->prev = prev;
     }
-
     return item->belt + 1;
 }
 
@@ -187,16 +185,16 @@ int q_500(){
             target = (target + 1) % m;
         }
 
-        BOX* prev = belt[target].tail -> prev;
-        BOX* begin = belt[belt_num].head -> next;
-        BOX* end = belt[belt_num].tail -> prev;
+        BOX* prev = belt[target].tail->prev;
+        BOX* begin = belt[belt_num].head->next;
+        BOX* end = belt[belt_num].tail->prev;
 
         for(auto it = begin; it != belt[belt_num].tail; it = it->next){
             it->belt = target;
         }
 
         prev->next = begin;
-        begin -> prev = prev;
+        begin->prev = prev;
 
         end->next = belt[target].tail;
         belt[target].tail->prev = end;
@@ -208,7 +206,9 @@ int q_500(){
     return belt_num + 1;
 }
 
-int main(){
+int main() {
+    // 여기에 코드를 작성해주세요.
+
     ios::sync_with_stdio(0);
     cin.tie(0);
     cout.tie(0);
@@ -216,23 +216,22 @@ int main(){
     cin >> q;
     while(q--){
         cin >> cmd;
-        switch (cmd)
-        {
-        case 100:
-            q_100();
-            break;
-        case 200:
-            cout << q_200() <<"\n";
-            break;
-        case 300:
-            cout << q_300() <<"\n";
-            break;
-        case 400:
-            cout << q_400() <<"\n";
-            break;
-        case 500:
-            cout << q_500() <<"\n";
-            break;
+        switch(cmd){
+            case 100:
+                q_100();
+                break;
+            case 200:
+                cout<<q_200()<<"\n";
+                break;
+            case 300:
+                cout<<q_300()<<"\n";
+                break;
+            case 400:
+                cout<<q_400()<<"\n";
+                break;
+            case 500:
+                cout<<q_500()<<"\n";
+                break;
         }
     }
 
